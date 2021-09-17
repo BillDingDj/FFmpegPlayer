@@ -4,7 +4,7 @@
 #include <android/native_window.h>
 #include "FFmpegPlayer.h"
 //
-// Created by pcboy on 2021/9/14.
+// Created by BillDing on 2021/9/14.
 //
 #ifdef __cplusplus
 extern "C" {
@@ -12,7 +12,7 @@ extern "C" {
 
 long nativeInit(JNIEnv *env, jobject thiz, jstring url,
                 jint render_type, jobject surface) {
-    const char* m_Url = env->GetStringUTFChars(url, nullptr);
+    const char *m_Url = env->GetStringUTFChars(url, nullptr);
     FFmpegPlayer *player = new FFmpegPlayer();
     long handler = player->Init(const_cast<char *>(m_Url), surface);
     if (handler != 0) {
@@ -23,23 +23,23 @@ long nativeInit(JNIEnv *env, jobject thiz, jstring url,
 }
 
 void nativePlay(JNIEnv *env, jobject thiz, jlong handler) {
-    auto *player = reinterpret_cast<FFmpegPlayer*>(handler);
+    auto *player = reinterpret_cast<FFmpegPlayer *>(handler);
     if (player == nullptr) {
         return;
     }
     player->play();
 }
 
-void nativeSeekToPosition(JNIEnv *env, jobject thiz, jlong handler, jfloat positon) {
-    auto *player = reinterpret_cast<FFmpegPlayer*>(handler);
+void nativeSeekToPosition(JNIEnv *env, jobject thiz, jlong handler, jfloat position) {
+    auto *player = reinterpret_cast<FFmpegPlayer *>(handler);
     if (player == nullptr) {
         return;
     }
-    player->seekToPosition(p);
+    player->seekToPosition(position);
 }
 
 void nativePause(JNIEnv *env, jobject thiz, jlong handler) {
-    auto *player = reinterpret_cast<FFmpegPlayer*>(handler);
+    auto *player = reinterpret_cast<FFmpegPlayer *>(handler);
     if (player == nullptr) {
         return;
     }
@@ -47,7 +47,7 @@ void nativePause(JNIEnv *env, jobject thiz, jlong handler) {
 }
 
 void nativeStop(JNIEnv *env, jobject thiz, jlong handler) {
-    auto *player = reinterpret_cast<FFmpegPlayer*>(handler);
+    auto *player = reinterpret_cast<FFmpegPlayer *>(handler);
     if (player == nullptr) {
         return;
     }
@@ -55,7 +55,7 @@ void nativeStop(JNIEnv *env, jobject thiz, jlong handler) {
 }
 
 void nativeUnInit(JNIEnv *env, jobject thiz, jlong handler) {
-    auto *player = reinterpret_cast<FFmpegPlayer*>(handler);
+    auto *player = reinterpret_cast<FFmpegPlayer *>(handler);
     if (player == nullptr) {
         return;
     }
@@ -63,12 +63,12 @@ void nativeUnInit(JNIEnv *env, jobject thiz, jlong handler) {
 }
 
 static JNINativeMethod methods[] = {
-        {"native_Init", "(Ljava/lang/String;ILjava/lang/Object;)J", (void *) nativeInit},
-        {"native_Play", "(J)V", (void *) nativePlay},
-        {"native_SeekToPosition", "(JF)V", (void *) nativeSeekToPosition},
-        {"native_Pause", "(J)V", (void *) nativePause},
-        {"native_Stop", "(J)V", (void *) nativeStop},
-        {"native_UnInit", "(J)V", (void *) nativeUnInit},
+        {"native_Init",           "(Ljava/lang/String;ILjava/lang/Object;)J", (void *) nativeInit},
+        {"native_Play",           "(J)V",                                     (void *) nativePlay},
+        {"native_SeekToPosition", "(JF)V",                                    (void *) nativeSeekToPosition},
+        {"native_Pause",          "(J)V",                                     (void *) nativePause},
+        {"native_Stop",           "(J)V",                                     (void *) nativeStop},
+        {"native_UnInit",         "(J)V",                                     (void *) nativeUnInit},
 };
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
