@@ -6,11 +6,12 @@ import android.os.PersistableBundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 
 class ANativePlayerActivity : AppCompatActivity() {
 
     companion object {
-        private  var mVideoPath: String = Environment.getExternalStorageDirectory().getAbsolutePath()+"/building/one_piece.mp4"
+        private  var mVideoPath: String = Environment.getExternalStorageDirectory().getAbsolutePath()+"/one_piece.mp4"
 
         const val VIDEO_RENDER_OPENGL = 0
         const val VIDEO_RENDER_ANWINDOW = 1
@@ -21,11 +22,16 @@ class ANativePlayerActivity : AppCompatActivity() {
 
     private var mPlayer: IPlayerListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_a_native_player)
         mSurfaceView = findViewById(R.id.a_native_surface_view)
         initSurfaceView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mPlayer != null) mPlayer?.play()
     }
 
     private fun initSurfaceView() {
@@ -33,6 +39,7 @@ class ANativePlayerActivity : AppCompatActivity() {
             holder.addCallback(object : SurfaceHolder.Callback {
                 override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
                     mPlayer = FFmpegPlayer()
+                    val file = File(mVideoPath)
                     mPlayer?.init(mVideoPath, VIDEO_RENDER_ANWINDOW, surfaceHolder.getSurface())
                 }
 

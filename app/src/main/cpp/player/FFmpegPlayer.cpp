@@ -2,71 +2,87 @@
 // Created by pcboy on 2021/9/16.
 //
 
+#include <NativeRender.h>
 #include "FFmpegPlayer.h"
 
+void FFmpegPlayer::Init(JNIEnv *jniEnv, jobject obj, char *url, int renderType, jobject surface) {
 
-long FFmpegPlayer::Init(JNIEnv *env, char *url, jobject surface) {
-    m_Url = url;
-    m_Window = ANativeWindow_fromSurface(env, surface);
+    jniEnv->GetJavaVM(&m_JavaVM);
+    m_JavaObj = jniEnv->NewGlobalRef(obj);
 
-    m_AvFormatContext = avformat_alloc_context();
+    m_VideoDecoder = new VideoDecoder(url);
 
-    if (avformat_open_input(&m_AvFormatContext, m_Url, nullptr, nullptr) < 0) {
-        return 0;
+    m_VideoRender = new NativeRender(jniEnv, surface);
+    m_VideoDecoder->SetVideoRender(m_VideoRender);
+}
+
+void FFmpegPlayer::UnInit() {
+    if(m_VideoDecoder) {
+        delete m_VideoDecoder;
+        m_VideoDecoder = nullptr;
     }
 
-    if (avformat_find_stream_info(m_AvFormatContext, nullptr) < 0) {
-        return 0;
+    if(m_VideoRender) {
+        delete m_VideoRender;
+        m_VideoRender = nullptr;
     }
 
-    for (int i = 0; i < m_AvFormatContext->nb_streams; ++i) {
-        if (m_AvFormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
-            m_VideoIndex = i;
-            break;
+    bool isAttach = false;
+    GetJNIEnv(&isAttach)->DeleteGlobalRef(m_JavaObj);
+    if(isAttach)
+        GetJavaVM()->DetachCurrentThread();
+}
+
+void FFmpegPlayer::Play() {
+    if(m_VideoDecoder)
+        m_VideoDecoder->Start();
+}
+
+void FFmpegPlayer::Pause() {
+    if(m_VideoDecoder)
+        m_VideoDecoder->Pause();
+}
+
+void FFmpegPlayer::Stop() {
+    if(m_VideoDecoder)
+        m_VideoDecoder->Stop();
+}
+
+void FFmpegPlayer::SeekToPosition(float position) {
+    if(m_VideoDecoder)
+        m_VideoDecoder->SeekToPosition(position);
+
+}
+
+long FFmpegPlayer::GetMediaParams(int paramType) {
+    return 0;
+}
+
+JNIEnv *FFmpegPlayer::GetJNIEnv(bool *isAttach) {
+    JNIEnv *env;
+    int status;
+    if (nullptr == m_JavaVM) {
+        return nullptr;
+    }
+    *isAttach = false;
+    status = m_JavaVM->GetEnv((void **)&env, JNI_VERSION_1_4);
+    if (status != JNI_OK) {
+        status = m_JavaVM->AttachCurrentThread(&env, nullptr);
+        if (status != JNI_OK) {
+            return nullptr;
         }
+        *isAttach = true;
     }
+    return env;}
 
-    if (m_VideoIndex == -1) {
-        return 0;
-    }
-    AVCodecParameters *codecParameters = m_AvFormatContext->streams[m_VideoIndex]->codecpar;
-    m_AvCodec = avcodec_find_decoder(codecParameters->codec_id);
-    if (m_AvCodec == nullptr) {
-        return 0;
-    }
-
-    m_AvCodecContext = avcodec_alloc_context3(m_AvCodec);
-    if (avcodec_parameters_to_context(m_AvCodecContext, codecParameters) != 0) {
-        return 0;
-    }
-
-    auto result = avcodec_open2(m_AvCodecContext, m_AvCodec, nullptr);
-    if (result < 0) {
-        return 0;
-    }
-    m_Duration = m_AvFormatContext->duration;
-    m_AvPacket = av_packet_alloc();
-    m_AvFrame = av_frame_alloc();
-
-    return reinterpret_cast<long>(this);
+jobject FFmpegPlayer::GetJavaObj() {
+    return m_JavaObj;
 }
 
-void FFmpegPlayer::play() {
-
+JavaVM *FFmpegPlayer::GetJavaVM() {
+    return m_JavaVM;
 }
 
-void FFmpegPlayer::stop() {
-
-}
-
-void FFmpegPlayer::pause() {
-
-}
-
-void FFmpegPlayer::seekToPosition(float p) {
-
-}
-
-void FFmpegPlayer::destroy() {
+void FFmpegPlayer::PostMessage(void *context, int msgType, float msgCode) {
 
 }

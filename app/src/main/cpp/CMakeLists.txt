@@ -5,26 +5,25 @@ set(jnilibs ${CMAKE_SOURCE_DIR}/../jniLibs)
 set(libname nativeplayer)
 
 include_directories(
-        include
+        ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/player
-        ${CMAKE_SOURCE_DIR}/player/decoder
         ${CMAKE_SOURCE_DIR}/player/render
-        ${CMAKE_SOURCE_DIR}/player/render/audio
         ${CMAKE_SOURCE_DIR}/player/render/video
+        ${CMAKE_SOURCE_DIR}/player/decoer
+        ${CMAKE_SOURCE_DIR}/player/decoer/video
+        ${CMAKE_SOURCE_DIR}/player
+        ${CMAKE_SOURCE_DIR}/util
 )
 
 link_directories(
         ${jnilibs}/${ANDROID_ABI}
 )
 
-file(GLOB src-files
-        ${CMAKE_SOURCE_DIR}/*.cpp
-        ${CMAKE_SOURCE_DIR}/player/*.cpp
-        ${CMAKE_SOURCE_DIR}/player/*.h
-        ${CMAKE_SOURCE_DIR}/player/decoder/*.cpp
-        ${CMAKE_SOURCE_DIR}/player/render/video/*.cpp
-        ${CMAKE_SOURCE_DIR}/player/render/audio/*.cpp
-        )
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR} base)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player player)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player/render/video video_render)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player/decoder base_decoder)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player/decoder/video video_decoder)
 
 add_library( # Sets the name of the library.
         ${libname}
@@ -33,7 +32,11 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        ${src-files}
+        ${base}
+        ${player}
+        ${video_render}
+        ${base_decoder}
+        ${video_decoder}
         )
 
 set(third-party-libs

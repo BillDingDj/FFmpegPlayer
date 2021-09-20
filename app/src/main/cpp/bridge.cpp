@@ -14,12 +14,8 @@ long nativeInit(JNIEnv *env, jobject thiz, jstring url,
                 jint render_type, jobject surface) {
     const char *m_Url = env->GetStringUTFChars(url, nullptr);
     FFmpegPlayer *player = new FFmpegPlayer();
-    long handler = player->Init(const_cast<char *>(m_Url), surface);
-    if (handler != 0) {
-        return handler;
-    } else {
-        return 0;
-    }
+    player->Init(env, thiz, const_cast<char *>(m_Url), render_type, surface);
+    return reinterpret_cast<jlong>(player);
 }
 
 void nativePlay(JNIEnv *env, jobject thiz, jlong handler) {
@@ -27,7 +23,7 @@ void nativePlay(JNIEnv *env, jobject thiz, jlong handler) {
     if (player == nullptr) {
         return;
     }
-    player->play();
+    player->Play();
 }
 
 void nativeSeekToPosition(JNIEnv *env, jobject thiz, jlong handler, jfloat position) {
@@ -35,7 +31,7 @@ void nativeSeekToPosition(JNIEnv *env, jobject thiz, jlong handler, jfloat posit
     if (player == nullptr) {
         return;
     }
-    player->seekToPosition(position);
+    player->SeekToPosition(position);
 }
 
 void nativePause(JNIEnv *env, jobject thiz, jlong handler) {
@@ -43,7 +39,7 @@ void nativePause(JNIEnv *env, jobject thiz, jlong handler) {
     if (player == nullptr) {
         return;
     }
-    player->pause();
+    player->Pause();
 }
 
 void nativeStop(JNIEnv *env, jobject thiz, jlong handler) {
@@ -51,7 +47,7 @@ void nativeStop(JNIEnv *env, jobject thiz, jlong handler) {
     if (player == nullptr) {
         return;
     }
-    player->stop();
+    player->Stop();
 }
 
 void nativeUnInit(JNIEnv *env, jobject thiz, jlong handler) {
@@ -59,7 +55,7 @@ void nativeUnInit(JNIEnv *env, jobject thiz, jlong handler) {
     if (player == nullptr) {
         return;
     }
-    player->destroy();
+    player->UnInit();
 }
 
 static JNINativeMethod methods[] = {
@@ -89,7 +85,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
         return JNI_ERR;
     }
 
-    return JNI_OK;
+    return JNI_VERSION_1_2;
 }
 
 JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {

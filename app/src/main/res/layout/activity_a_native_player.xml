@@ -5,6 +5,6 @@
 
     <SurfaceView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="240dp"
         android:id="@+id/a_native_surface_view"/>
 </FrameLayout>

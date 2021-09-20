@@ -15,42 +15,42 @@ public class FFmpegPlayer implements IPlayerListener{
     @Override
     public void init(@NonNull String url, int videoRenderType, @NonNull Surface surface) {
         long handle = native_Init(url, videoRenderType, surface);
-        if (handle > 0) {
+        if (handle != 0) {
             handler = handle;
         }
     }
 
     @Override
     public void play() {
-        if (handler > 0) {
+        if (handler != 0) {
             native_Play(handler);
         }
     }
 
     @Override
     public void pause() {
-        if (handler > 0) {
+        if (handler != 0) {
             native_Pause(handler);
         }
     }
 
     @Override
     public void stop() {
-        if (handler > 0) {
+        if (handler != 0) {
             native_Stop(handler);
         }
     }
 
     @Override
     public void destroy() {
-        if (handler > 0) {
+        if (handler != 0) {
             native_UnInit(handler);
         }
     }
 
     @Override
     public void seekToPosition(float p) {
-        if (handler > 0) {
+        if (handler != 0) {
             native_SeekToPosition(handler, p);
         }
     }

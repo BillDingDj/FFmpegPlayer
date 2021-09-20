@@ -9,7 +9,8 @@
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include <android/log.h>
-
+#include <decoder/video/VideoDecoder.h>
+#include "LogUtil.h"
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -23,30 +24,33 @@ extern "C" {
 class FFmpegPlayer {
 
 public:
-    long Init(JNIEnv *env, char* url, jobject surface);
+    FFmpegPlayer(){};
+    ~FFmpegPlayer(){};
 
-    void play();
+    void Init(JNIEnv *jniEnv, jobject obj, char *url, int renderType, jobject surface);
+    void UnInit();
 
-    void stop();
+    void Play();
+    void Pause();
+    void Stop();
+    void SeekToPosition(float position);
+    long GetMediaParams(int paramType);
 
-    void pause();
-
-    void seekToPosition(float p);
-
-    void destroy();
 private:
-    ANativeWindow *m_Window = nullptr;
-    char* m_Url = nullptr;
+    JNIEnv *GetJNIEnv(bool *isAttach);
+    jobject GetJavaObj();
+    JavaVM *GetJavaVM();
 
-    AVFormatContext *m_AvFormatContext = nullptr;
-    int m_VideoIndex = -1;
-    AVCodec *m_AvCodec = nullptr;
-    AVCodecContext *m_AvCodecContext = nullptr;
+    static void PostMessage(void *context, int msgType, float msgCode);
 
-    AVFrame *m_AvFrame = nullptr;
-    AVPacket *m_AvPacket = nullptr;
+    JavaVM *m_JavaVM = nullptr;
+    jobject m_JavaObj = nullptr;
 
-    int64_t m_Duration = 0;
+    VideoDecoder *m_VideoDecoder = nullptr;
+//    AudioDecoder *m_AudioDecoder = nullptr;
+
+    VideoRender *m_VideoRender = nullptr;
+//    AudioRender *m_AudioRender = nullptr;
 };
 
 
