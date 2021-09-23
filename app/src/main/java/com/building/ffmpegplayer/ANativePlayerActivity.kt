@@ -2,7 +2,6 @@ package com.building.ffmpegplayer
 
 import android.os.Bundle
 import android.os.Environment
-import android.os.PersistableBundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.appcompat.app.AppCompatActivity
@@ -38,7 +37,7 @@ class ANativePlayerActivity : AppCompatActivity() {
         mSurfaceView?.apply {
             holder.addCallback(object : SurfaceHolder.Callback {
                 override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
-                    mPlayer = FFmpegPlayer()
+                    mPlayer = NativeBrigde()
                     val file = File(mVideoPath)
                     mPlayer?.init(mVideoPath, VIDEO_RENDER_ANWINDOW, surfaceHolder.getSurface())
                 }

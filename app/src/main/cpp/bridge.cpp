@@ -57,14 +57,44 @@ void nativeUnInit(JNIEnv *env, jobject thiz, jlong handler) {
     }
     player->UnInit();
 }
+void GLInit(JNIEnv *env, jobject thiz) {
+
+}
+
+void GLUnInit(JNIEnv *env, jobject thiz) {
+
+}
+
+void GLSetImageData(JNIEnv *env, jobject thiz, jint format, jint width, jint height,
+                    jbyteArray bytes) {
+
+}
+
+void GLOnSurfaceCreate(JNIEnv *env, jobject thiz) {
+
+}
+
+void GLOnSurfaceChanged(JNIEnv *env, jobject thiz, jint width, jint height) {
+
+}
+
+void GLOnDrawFrames(JNIEnv *env, jobject thiz) {
+
+}
 
 static JNINativeMethod methods[] = {
-        {"native_Init",           "(Ljava/lang/String;ILjava/lang/Object;)J", (void *) nativeInit},
-        {"native_Play",           "(J)V",                                     (void *) nativePlay},
-        {"native_SeekToPosition", "(JF)V",                                    (void *) nativeSeekToPosition},
-        {"native_Pause",          "(J)V",                                     (void *) nativePause},
-        {"native_Stop",           "(J)V",                                     (void *) nativeStop},
-        {"native_UnInit",         "(J)V",                                     (void *) nativeUnInit},
+        {"native_Init",                "(Ljava/lang/String;ILjava/lang/Object;)J", (void *) nativeInit},
+        {"native_Play",                "(J)V",                                     (void *) nativePlay},
+        {"native_SeekToPosition",      "(JF)V",                                    (void *) nativeSeekToPosition},
+        {"native_Pause",               "(J)V",                                     (void *) nativePause},
+        {"native_Stop",                "(J)V",                                     (void *) nativeStop},
+        {"native_UnInit",              "(J)V",                                     (void *) nativeUnInit},
+        {"native_GL_Init",             "()V",                                      (void *) GLInit},
+        {"native_GL_OnInit",           "()V",                                      (void *) GLUnInit},
+        {"native_GL_SetImageData",     "(III[B)V",                                 (void *) GLSetImageData},
+        {"native_GL_OnSurfaceCreate",  "()V",                                      (void *) GLOnSurfaceCreate},
+        {"native_GL_OnSurfaceChanged", "(II)V",                                    (void *) GLOnSurfaceChanged},
+        {"native_GL_OnDrawFrames",     "()V",                                      (void *) GLOnDrawFrames},
 };
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
@@ -74,7 +104,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
         return JNI_EVERSION;
     }
 
-    const char *java_class = "com/building/ffmpegplayer/FFmpegPlayer";
+    const char *java_class = "com/building/ffmpegplayer/NativeBrigde";
     jclass clazz = env->FindClass(java_class);
 
     if (clazz == nullptr) {

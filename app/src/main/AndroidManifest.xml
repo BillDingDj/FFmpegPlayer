@@ -21,6 +21,7 @@
         </activity>
 
         <activity android:name=".ANativePlayerActivity"/>
+        <activity android:name=".OpenGLActivity"/>
     </application>
 
 </manifest>

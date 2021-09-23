@@ -11,6 +11,7 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/player/render/video
         ${CMAKE_SOURCE_DIR}/player/decoer
         ${CMAKE_SOURCE_DIR}/player/decoer/video
+        ${CMAKE_SOURCE_DIR}/player/decoer/audio
         ${CMAKE_SOURCE_DIR}/player
         ${CMAKE_SOURCE_DIR}/util
 )
@@ -24,6 +25,7 @@ AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player player)
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player/render/video video_render)
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player/decoder base_decoder)
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player/decoder/video video_decoder)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/player/decoder/audio audio_decoder)
 
 add_library( # Sets the name of the library.
         ${libname}
@@ -37,6 +39,7 @@ add_library( # Sets the name of the library.
         ${video_render}
         ${base_decoder}
         ${video_decoder}
+        ${audio_decoder}
         )
 
 set(third-party-libs
